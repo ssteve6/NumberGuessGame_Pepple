@@ -3,24 +3,18 @@
     "capabilities": [
         ""
     ],
-    "companyName": "shoenneil@gmail.com",
-    "longName": "SelfieWatch",
+    "companyName": "hailebaku@gmail.com",
+    "longName": "GuessTheNumberPebble",
     "projectType": "native",
     "resources": {
-        "media": [
-            {
-                "file": "images/Image-4039.png",
-                "name": "TEMP",
-                "type": "png"
-            }
-        ]
+        "media": []
     },
     "sdkVersion": "2",
-    "shortName": "SelfieWatch",
-    "uuid": "464bc4bf-dbf8-4af6-a073-9b12d8f41ba8",
+    "shortName": "GuessTheNumberPebble",
+    "uuid": "6a268fa0-6608-4f97-9869-e3268d4103f2",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
-        "watchface": true
+        "watchface": false
     }
 }
