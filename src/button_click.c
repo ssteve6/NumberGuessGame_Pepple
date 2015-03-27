@@ -5,34 +5,41 @@
 static Window *window;
 static TextLayer *text_layer;
 
-int i = 0;
-int number = 0;
+DictionaryIterator iter;
+int number = 25;
 
 void up_long_click_handler(ClickRecognizerRef recognizer, void *context) {
   
-  i = (i < 50) ? i + 1 : i;
+  number = (number < 50) ? number + 1 : number;
   static char buf[] = "123456";
-  snprintf(buf, sizeof(buf), "%d", i);
+  snprintf(buf, sizeof(buf), "%d", number);
   text_layer_set_text(text_layer, buf);
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Select");
+  
+  DictionaryIterator *iter;
+  app_message_outbox_begin(&iter);
+      
+  Tuplet value = TupletInteger(0, number);
+  dict_write_tuplet(iter, &value);
+      
+  app_message_outbox_send();
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
   
-  i = (i < 50) ? i + 1 : i;
+  number = (number < 50) ? number + 1 : number;
   static char buf[] = "123456";
-  snprintf(buf, sizeof(buf), "%d", i);
+  snprintf(buf, sizeof(buf), "%d", number);
   text_layer_set_text(text_layer, buf);
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
   
-  i = (i > 0) ? i - 1 : i;
+  number = (number > 0) ? number - 1 : number;
   static char buf[] = "123456";
-  snprintf(buf, sizeof(buf), "%d", i);
+  snprintf(buf, sizeof(buf), "%d", number);
   text_layer_set_text(text_layer, buf);
   
 }
@@ -48,7 +55,7 @@ static void window_load(Window *window) {
   GRect bounds = layer_get_bounds(window_layer);
 
   text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 20 } });
-  text_layer_set_text(text_layer, "Press a button");
+  text_layer_set_text(text_layer, "Get Ready to play!");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 }
@@ -61,16 +68,7 @@ static void window_unload(Window *window) {
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
 
     Tuple *t = dict_read_first(iterator);
-    number = (int)t->value->int32; 
-  
-    
-    static char buf[] = "123456";
-    snprintf(buf, sizeof(buf), "%d", i);
-    //text_layer_set_text(&countLayer, buf);
-  
-    //char buffer[20];
-    //itoa(number, buffer, 10);
-    text_layer_set_text(text_layer, "number");
+    text_layer_set_text(text_layer, t->value->cstring);
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -83,6 +81,7 @@ static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResul
 
 static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
+  
 }
 
 
@@ -100,11 +99,8 @@ static void init(void) {
   app_message_register_outbox_failed(outbox_failed_callback);
   app_message_register_outbox_sent(outbox_sent_callback);
   
-  // Register callbacks
-  app_message_register_inbox_received(inbox_received_callback);
-  app_message_register_inbox_dropped(inbox_dropped_callback);
-  app_message_register_outbox_failed(outbox_failed_callback);
-  app_message_register_outbox_sent(outbox_sent_callback);
+  // Open AppMessage
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
   
   const bool animated = true;
   window_stack_push(window, animated);
