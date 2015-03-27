@@ -16,6 +16,22 @@ void up_long_click_handler(ClickRecognizerRef recognizer, void *context) {
   text_layer_set_text(text_layer, buf);
 }
 
+void down_long_click_handler(ClickRecognizerRef recognizer, void *context) {
+  
+  number = (number > 0) ? number - 1 : number;
+  static char buf[] = "123456";
+  snprintf(buf, sizeof(buf), "%d", number);
+  text_layer_set_text(text_layer, buf);
+}
+
+void up_long_click_release_handler(ClickRecognizerRef recognizer, void *context) {
+
+}
+
+void down_long_click_release_handler(ClickRecognizerRef recognizer, void *context) {
+
+}
+
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
   
   DictionaryIterator *iter;
@@ -48,6 +64,9 @@ static void click_config_provider(void *context) {
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
   window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
   window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+  window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
+  window_long_click_subscribe(BUTTON_ID_UP, 100, up_long_click_handler, up_long_click_release_handler);
+  window_long_click_subscribe(BUTTON_ID_DOWN, 100, down_long_click_handler, down_long_click_release_handler);
 }
 
 static void window_load(Window *window) {
